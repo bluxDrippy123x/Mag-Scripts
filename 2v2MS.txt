@@ -1,0 +1,61 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local RunService = game:GetService("RunService")
+local catchDistance = 20
+local teleportDelay = 0.1
+local grayPart
+
+-- Function to create the gray part
+local function createGrayPart()
+    grayPart = Instance.new("Part")
+    grayPart.Size = Vector3.new(catchDistance, catchDistance, catchDistance)
+    grayPart.Color = Color3.fromRGB(128, 128, 128) -- Gray color
+    grayPart.Transparency = Transparency
+    grayPart.Anchored = true
+    grayPart.CanCollide = false
+    grayPart.Parent = workspace
+end
+
+-- Function to update the gray part's position
+local function updateGrayPartPosition()
+    if Character and grayPart then
+        grayPart.CFrame = Character.PrimaryPart.CFrame
+    end
+end
+
+-- Function to teleport the football to the local player's hands after a delay
+local function teleportFootball(football)
+    wait(teleportDelay)
+    if Character and football then
+        football.CFrame = Character.PrimaryPart.CFrame * CFrame.new(0, 0, -2)
+        football.Parent = Character
+    end
+end
+
+-- Function to check for nearby footballs
+local function checkForFootballs()
+    for _, football in ipairs(workspace:GetChildren()) do
+        if football:IsA("Part") and football.Name == "Football" then
+            local distance = (football.Position - Character.PrimaryPart.Position).magnitude
+            if distance <= catchDistance then
+                coroutine.wrap(teleportFootball)(football)
+            end
+        end
+    end
+end
+
+-- Create the gray part
+createGrayPart()
+
+-- Update the gray part's position and check for footballs every frame
+RunService.RenderStepped:Connect(function()
+    updateGrayPartPosition()
+    checkForFootballs()
+end)
+
+-- Handle character respawn
+LocalPlayer.CharacterAdded:Connect(function(newCharacter)
+    Character = newCharacter
+    createGrayPart()
+end)
