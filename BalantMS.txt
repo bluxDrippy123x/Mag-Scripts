@@ -11,7 +11,7 @@ local function createGrayPart()
     grayPart = Instance.new("Part")
     grayPart.Size = Vector3.new(catchDistance, catchDistance, catchDistance)
     grayPart.Color = Color3.fromRGB(128, 128, 128) -- Gray color
-    grayPart.Transparency = Transparency
+    grayPart.Transparency = 1
     grayPart.Anchored = true
     grayPart.CanCollide = false
     grayPart.Parent = workspace
